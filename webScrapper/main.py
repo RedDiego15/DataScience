@@ -2,6 +2,9 @@ import argparse
 import logging
 import re  #importo el modulo de expresiones regulares
 
+import datetime
+import csv
+
 from requests.exceptions import HTTPError
 from urllib3.exceptions import MaxRetryError
 
@@ -35,6 +38,24 @@ def _news_scraper(news_site_uid):
             articles.append(article)
             print("TITULO DEL ARTICULO: ",article.title)
         print(len(articles))
+    _save_articles(news_site_uid,articles)
+
+def _save_articles(news_site_uid, articles):
+    now = datetime.datetime.now().strftime('%y_%m_%d')
+    out_file_name = '{news_site_uid}_{datetime}_articles.csv'.format(
+        news_site_uid = news_site_uid,
+        datetime = now)
+    # no podemos acceder a las propiedades por que add property no se refleja como propiedad
+    # de python se refleja como funcion
+    # vamos a filtrar todas las propiedades que no empiecen por guion bajo
+    csv_headers = list(filter(lambda property: not property.startswith('_'),dir(articles[0])))
+    with open(out_file_name,mode = 'w+') as f:
+        writer = csv.writer()
+        writer.writerow(csv_headers) #escribe la primera columna nuestros csv headers
+
+        for article in articles:
+            row = [str(getattr(article,prop))for prop in csv_headers]
+            writer.writerow(row)
 
 def _fetch_article(news_site_uid,host,link):
     logging.info('Start fetching article at {}'.format(link))
