@@ -78,8 +78,6 @@ def _build_link(host,link):
     else:
         return'{host}/{uri}'.format(host=host,uri = link)
 
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser() #para decir que el programa recibe argumentos
     print(list(config().keys()))
