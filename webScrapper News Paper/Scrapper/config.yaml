@@ -1,0 +1,15 @@
+news_sites:
+  eluniversal:
+    url: http://www.eluniversal.com.mx #importante tener esto Correctamente
+    queries:
+      homepage_article_links: '.field-content a'
+      article_body: '.field-name-body'    #revisar sin p
+      article_title: '.Encabezado-Articulo h1'
+  elpais:
+    url: https://elpais.com
+    queries:
+      homepage_article_links: ''
+  yahooDivisas:
+    url: https://finance.yahoo.com/currencies
+    queries:
+      homepage_article_links: '.data-col0 a '
