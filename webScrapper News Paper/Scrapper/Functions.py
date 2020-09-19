@@ -2,8 +2,7 @@ import datetime
 import csv
 import re  #importo el modulo de expresiones regulares
 from news_pages_objects import ArticlePage
-from requests.exceptions import HTTPError
-from urllib3.exceptions import MaxRetryError
+
 
 is_Well_formed_link = re.compile(r'^https?://.+/.+$')
 """^ nos da el inicio de la palabra 
@@ -31,19 +30,19 @@ def _getArticles(homepage, news_site_uid, host,logger):
 
 def _fetch_article(news_site_uid, host, link,logger):
     logger.info('Start fetching article at {}'.format(link))
-    article = None
-    try:
-        article = ArticlePage(news_site_uid, _build_link(host, link)) #aqui ya estoy en l;a pagina del link que obtuve del homepage
-    except(HTTPError, MaxRetryError) as e:
-        logger.warning("Error while fetching the article", exc_info=False)
+
+    article = ArticlePage(news_site_uid, _build_link(host, link)) #aqui ya estoy en l;a pagina del link que obtuve del homepage
+
 
     if article:
-        if not article.body:
+        if article.html == None:
+            logger.warning('html Error')
+        elif not article.body:
             logger.warning('Invalid article. There is no body')
-            article =None
         elif not article.title:
             logger.warning('Invalid article. There is no Title')
-            article = None
+        return None
+
 
     return article
 
@@ -64,11 +63,13 @@ def _save_articles(news_site_uid, articles ,logger):
         news_site_uid=news_site_uid,
         datetime=now)
 
-    print(dir(articles[0]))
+
     # no podemos acceder a las propiedades por que add property no se refleja como propiedad
     # de python se refleja como funcion
     # vamos a filtrar todas las propiedades que no empiecen por guion bajo
     csv_headers = list(filter(lambda property: not property.startswith('_'), dir(articles[0])))
+    csv_headers.remove('html')
+    print("lista csvHeaders :",csv_headers)
     with open(out_file_name, mode='w+',encoding= "utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(csv_headers)  # escribe la primera columna nuestros csv headers

@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-
+from requests.exceptions import HTTPError
+from urllib3.exceptions import MaxRetryError
 from common import config
 
 class NewsPage:
@@ -15,12 +16,23 @@ class NewsPage:
 
     def _visit(self, url):
         try:
+
+
             response = requests.get(url)
-            #response.request.header muestra la forma en como hago la solicitud
             response.raise_for_status()  # arroja si la solicitud no se concluye correctamente
-            self._html = BeautifulSoup(response.text, 'html.parser')
-        except:
-            self._html.bs4.BeautifulSoup('')
+            if(response.status_code == 200):
+                #response.request.header muestra la forma en como hago la solicitud
+                self._html = BeautifulSoup(response.text, 'html.parser')
+
+        except HTTPError as http_err:
+            print(f'HTTP error occurred: {http_err}')  # Python 3.6
+        except MaxRetryError as Max_err:
+            print(f'HTTP error MaxEntry ocurred: {Max_err}')  # Python 3.6
+        except Exception as err:
+            print(f'Other error occurred: {err}')  # Python 3.6
+
+
+
 
 
 class HomePage(NewsPage):
@@ -40,6 +52,7 @@ class ArticlePage(NewsPage):
 
     def __init__(self,news_site_uid,url):
         super().__init__(news_site_uid,url)
+        self._url = url
 
     #En web scrapp hay que ser muy defensivos
 
@@ -60,5 +73,9 @@ class ArticlePage(NewsPage):
     @property
     def url(self):
         return self._url
+
+    @property
+    def html(self):
+        return self._html
 
 
