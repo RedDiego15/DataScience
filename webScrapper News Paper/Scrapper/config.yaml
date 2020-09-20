@@ -5,4 +5,4 @@ news_sites:
       homepage_article_links: '.field-content a'
       article_body: '.field-name-body'    #revisar sin p
       article_title: '.Encabezado-Articulo h1'
-  
+
