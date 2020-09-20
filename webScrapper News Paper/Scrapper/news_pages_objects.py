@@ -16,8 +16,6 @@ class NewsPage:
 
     def _visit(self, url):
         try:
-
-
             response = requests.get(url)
             response.raise_for_status()  # arroja si la solicitud no se concluye correctamente
             if(response.status_code == 200):

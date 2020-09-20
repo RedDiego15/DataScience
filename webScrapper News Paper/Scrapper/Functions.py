@@ -23,7 +23,7 @@ def _getArticles(homepage, news_site_uid, host,logger):
             logger.info('Article fetched!!!')
             articles.append(article)
             print("TITULO DEL ARTICULO: ", article.title)
-    print(len(articles))
+    print("el len de articles: ",len(articles))
 
     return articles
 
@@ -32,19 +32,18 @@ def _fetch_article(news_site_uid, host, link,logger):
     logger.info('Start fetching article at {}'.format(link))
 
     article = ArticlePage(news_site_uid, _build_link(host, link)) #aqui ya estoy en l;a pagina del link que obtuve del homepage
-
-
     if article:
         if article.html == None:
             logger.warning('html Error')
+            article = None
         elif not article.body:
             logger.warning('Invalid article. There is no body')
+            article = None
         elif not article.title:
             logger.warning('Invalid article. There is no Title')
-        return None
+            article = None
 
-
-    return article
+        return article
 
 
 def _build_link(host, link):
